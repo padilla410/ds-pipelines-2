@@ -31,15 +31,22 @@ targets:
   1_fetch/out/nwis_01466500.csv:
     command: download_nwis_site_data(target_name)
     
-  site_data:
-    command: combine_site_data('1_fetch/out/nwis_01427207.csv', '1_fetch/out/nwis_01432160.csv', '1_fetch/out/nwis_01436690.csv', '1_fetch/out/nwis_01466500.csv')
+  # site_data:
+  1_fetch/out/site_data.csv:
+    command: combine_site_data(
+      target_name, 
+      '1_fetch/out/nwis_01427207.csv', 
+      '1_fetch/out/nwis_01432160.csv', 
+      '1_fetch/out/nwis_01436690.csv', 
+      '1_fetch/out/nwis_01466500.csv')
 
-  1_fetch/out/site_info.csv:
-    command: nwis_site_info(fileout = '1_fetch/out/site_info.csv', site_data)
+  # 1_fetch/out/site_info.csv:
+  site_info:
+    command: nwis_site_info(target_name, site_data_file = '1_fetch/out/site_data.csv')
 
-  site_data_clean:
-    command: process_data(site_data, site_filename = '1_fetch/out/site_info.csv')
+  # site_data_clean:
+  2_process/out/site_data_clean.csv:
+    command: process_data(target_name, site_data_file = '1_fetch/out/site_data.csv', site_info)
   
   3_visualize/out/figure_1.png:
-    command: plot_nwis_timeseries(fileout = '3_visualize/out/figure_1.png', 
-      site_data_clean) 
+    command: plot_nwis_timeseries(fileout = '3_visualize/out/figure_1.png', site_data_clean_file = '2_process/out/site_data_clean.csv') 
