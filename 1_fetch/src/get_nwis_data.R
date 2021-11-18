@@ -1,5 +1,5 @@
 
-download_nwis_data <- function(site_nums = c("01427207", "01432160", "01435000", "01436690", "01466500")){
+download_nwis_data <- function(site_nums = c("01427207", "01432160", "01436690", "01466500")){ # removing "01435000"
   
   # create the file names that are needed for download_nwis_site_data
   # tempdir() creates a temporary directory that is wiped out when you start a new R session; 
@@ -17,13 +17,34 @@ download_nwis_data <- function(site_nums = c("01427207", "01432160", "01435000",
   return(data_out)
 }
 
+#' Get NWIS site data info
+#' 
+#' Returns site metadata for all NWIS gages included in `site_data` target
+#' 
+#' @param fileout str, a relative output file path
+#' @param site_data upstream `target`
+#' 
 nwis_site_info <- function(fileout, site_data){
   site_no <- unique(site_data$site_no)
   site_info <- dataRetrieval::readNWISsite(site_no)
   write_csv(site_info, fileout)
 }
 
+#' Combine NWIS files for specified gages
+#' 
+#' Returns a table of NWIS data from user-specified gages
+#' 
+#' @param ... all upstream targets that should be combined for use in the downstream `site_data` target
+#' 
+combine_site_data <- function(...){
+  files_in <- c(...)
+  data <- lapply(files_in, readr::read_csv, col_types = 'ccTdcc') %>% bind_rows()
+  
+  return(data)
+}
 
+#' a helper function called internally by `download_nwis_data()`
+#' 
 download_nwis_site_data <- function(filepath, parameterCd = '00010', startDate="2014-05-01", endDate="2015-05-01"){
   
   # filepaths look something like directory/nwis_01432160_data.csv,
@@ -41,7 +62,7 @@ download_nwis_site_data <- function(filepath, parameterCd = '00010', startDate="
   }
   # -- end of do-not-edit block
   
-  write_csv(data_out, path = filepath)
+  write_csv(data_out, file = filepath)
   return(filepath)
 }
 
