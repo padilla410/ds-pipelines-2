@@ -17,6 +17,13 @@ download_nwis_data <- function(site_nums = c("01427207", "01432160", "01436690",
   return(data_out)
 }
 
+#' Get NWIS site data info
+#' 
+#' Returns site metadata for all NWIS gages included in `site_data` target
+#' 
+#' @param fileout str, a relative output file path
+#' @param site_data upstream `target`
+#' 
 nwis_site_info <- function(fileout, site_data){
   site_no <- unique(site_data$site_no)
   site_info <- dataRetrieval::readNWISsite(site_no)

@@ -38,14 +38,8 @@ targets:
     command: nwis_site_info(fileout = '1_fetch/out/site_info.csv', site_data)
 
   site_data_clean:
-    command: process_data(site_data)
-
-  site_data_annotated:
-    command: annotate_data(site_data_clean, site_filename = '1_fetch/out/site_info.csv')
-
-  site_data_styled:
-    command: style_data(site_data_annotated)	
-
+    command: process_data(site_data, site_filename = '1_fetch/out/site_info.csv')
+  
   3_visualize/out/figure_1.png:
     command: plot_nwis_timeseries(fileout = '3_visualize/out/figure_1.png', 
-      site_data_styled)  
+      site_data_clean) 
