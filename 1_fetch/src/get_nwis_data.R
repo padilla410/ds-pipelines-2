@@ -24,10 +24,14 @@ download_nwis_data <- function(site_nums = c("01427207", "01432160", "01436690",
 #' @param fileout str, a relative output file path
 #' @param site_data upstream `target`
 #' 
-nwis_site_info <- function(fileout, site_data){
+nwis_site_info <- function(site_info, site_data_file){
+  # load station data
+  site_data <- readr::read_csv(site_data_file)
+  
   site_no <- unique(site_data$site_no)
   site_info <- dataRetrieval::readNWISsite(site_no)
-  write_csv(site_info, fileout)
+
+  return(site_info)
 }
 
 #' Combine NWIS files for specified gages
@@ -36,11 +40,12 @@ nwis_site_info <- function(fileout, site_data){
 #' 
 #' @param ... all upstream targets that should be combined for use in the downstream `site_data` target
 #' 
-combine_site_data <- function(...){
+combine_site_data <- function(fileout, ...){
   files_in <- c(...)
   data <- lapply(files_in, readr::read_csv, col_types = 'ccTdcc') %>% bind_rows()
   
-  return(data)
+  readr::write_csv(data, file = fileout)
+  # return(data)
 }
 
 #' a helper function called internally by `download_nwis_data()`
